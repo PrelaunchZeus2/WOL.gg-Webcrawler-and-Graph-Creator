@@ -1,0 +1,1 @@
+This contains the code I wrote for a python webcrawler script that grabs the top players from the WOL.gg website which tracks hours played on league of legends. It plots a graph of the ranking of the player and their accumulated hours. It also creates a .csv file of the data it scrapes.
