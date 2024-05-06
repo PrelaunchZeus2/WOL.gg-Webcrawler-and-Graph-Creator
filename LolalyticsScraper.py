@@ -33,7 +33,7 @@ for row in rows:
     data.append([int(Rank), str(Name), str(Tier), str(Lane_pos), str(Lane_percent), float(Win), float(Pick), float(Ban), int(Pbi), int(Games)])
 
 
-with open('Lolalytics_Scraped_Data', 'w', newline='', encoding='utf-8') as file:
+with open('Lolalytics_Scraped_Data.csv', 'w', newline='', encoding='utf-8') as file:
     writer = csv.writer(file)
     writer.writerow(["Rank", "Name", "Tier", "Lane Position", "Lane Percentage", "Win", "Pick", "Ban", "Pbi", "Games"])
     writer.writerows(data)
