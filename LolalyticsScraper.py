@@ -3,7 +3,7 @@
 import requests
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
-import threading
+import csv
 
 #Site Url
 url = 'https://lolalytics.com/lol/tierlist/'
@@ -15,24 +15,28 @@ response = requests.get(url)
 soup = BeautifulSoup(response.text, 'html.parser')
 
 #get the data
-rows = soup.find_all('div', class_ = 'flex h-[52px]  justify-between text-[13px] text-[#ccc] odd:bg-[#181818] even:bg-[#101010]')
+rows = soup.find_all('div', class_='flex h-[52px] justify-between text-[13px] text-[#ccc] odd:bg-[#181818] even:bg-[#101010]')
 
 data = []
 for row in rows:
-    Rank = row.find('[q = "0"]')
-    Icon = row.find('[q = "1"]')
-    Name = row.find('[q = "SO_0"]')
-    Tier = row.find('[q = "3"]')
-    Lane_pos = None  # There are two elements in lane, consider looking at alt text of image for lane and new data for lane percentage which is an int
-    Lane_percent = None
-    Win = row.find('[q = "Ts_0"]')
-    Pick = row.find('[q = "6"]')
-    Ban = row.find('[q = 7]')
-    Pbi = row.find('[q = 8]')
-    Games = row.find('[q = 9]')
-    data.append([int(Rank), str(Icon), str(Name), int(Tier), Lane_pos, Lane_percent, float(Win), float(Pick), float(Ban), int(Pbi), int(Games)])
+    Rank = row.find(attrs={"q:key": "0"}).text
+    Icon = row.find(attrs={"q:key": "0"}).text
+    Name = row.find(attrs={"q:key": "SO_0"}).text
+    Tier = row.find(attrs={"q:key": "3"}).text
+    Lane_pos = row.find(attrs={"q:key": "kS_0"}).get('alt')
+    Lane_percent = row.find(attrs={"q:key": "kS_0"}).text
+    Win = row.find(attrs={"q:key": "Ts_0"}).text
+    Pick = row.find(attrs={"q:key": "6"}).text
+    Ban = row.find(attrs={"q:key": "7"}).text
+    Pbi = row.find(attrs={"q:key": "8"}).text
+    Games = row.find(attrs={"q:key": "9"}).text.strip().replace(',', '')
+    data.append([int(Rank), str(Name), str(Tier), str(Lane_pos), str(Lane_percent), float(Win), float(Pick), float(Ban), int(Pbi), int(Games)])
 
-    print(data)
+
+with open('Lolalytics_Scraped_Data', 'w', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file)
+    writer.writerow(["Rank", "Name", "Tier", "Lane Position", "Lane Percentage", "Win", "Pick", "Ban", "Pbi", "Games"])
+    writer.writerows(data)
 
 
 
