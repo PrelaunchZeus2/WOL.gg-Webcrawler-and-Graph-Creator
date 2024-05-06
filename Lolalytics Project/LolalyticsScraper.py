@@ -1,12 +1,17 @@
 #This script is going to comb the lolalytics site to find champion winrate and playrate data for the current patch. Then generate a graph of the data with x as the pickrate and y as the win delta
+#The data will be saved in a csv file called Lolalytics_Scraped_Data.csv
 
-import requests
+#imports
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 import csv
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
+
+
+
 
 #Site Url
 url = 'https://lolalytics.com/lol/tierlist/'
@@ -14,16 +19,17 @@ url = 'https://lolalytics.com/lol/tierlist/'
 #The site uses lazy loading so we need to scroll down to get all the data
 driver = webdriver.Firefox()
 driver.get(url)
-body = driver.find_element_by_css_selector('body')
-for _ in range(10):  # Adjust this range according to your needs
+body = driver.find_element(By.CSS_SELECTOR, 'body')
+for _ in range(5):  # Adjust this range according to your needs
     body.send_keys(Keys.PAGE_DOWN)
-    time.sleep(2)  # Wait for the page to load
+    time.sleep(1)  # Wait for the page to load
 
-#request the site
-response = requests.get(url)
 
 #parse the page
-soup = BeautifulSoup(response.text, 'html.parser')
+soup = BeautifulSoup(driver.page_source, 'html.parser')
+with open('Lolalytics.html', 'w', encoding='utf-8') as file:
+    file.write(str(soup))
+driver.quit()
 
 #get the data
 rows = soup.find_all('div', class_='flex h-[52px] justify-between text-[13px] text-[#ccc] odd:bg-[#181818] even:bg-[#101010]')
@@ -50,7 +56,7 @@ with open('Lolalytics_Scraped_Data.csv', 'w', newline='', encoding='utf-8') as f
     writer.writerows(data)
 
 
-driver.quit()
+
 
 
 
