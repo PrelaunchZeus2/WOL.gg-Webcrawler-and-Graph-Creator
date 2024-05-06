@@ -32,9 +32,9 @@ def scrape_page(i):
     soup = BeautifulSoup(response.text, 'html.parser')
 
     #Get the data
-    rows_color2 = soup.find_all(class_='row color2')
-    rows_color3 = soup.find_all(class_='row color3')
-    rows = rows_color2 + rows_color3
+    row_type_1_data = soup.find_all(class_='row color2')
+    row_type_2_data = soup.find_all(class_='row color3')
+    rows = row_type_1_data + row_type_2_data
 
     page_data = []
     for row in rows:
