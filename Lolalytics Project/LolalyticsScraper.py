@@ -4,9 +4,20 @@ import requests
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 import csv
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import time
 
 #Site Url
 url = 'https://lolalytics.com/lol/tierlist/'
+
+#The site uses lazy loading so we need to scroll down to get all the data
+driver = webdriver.Firefox()
+driver.get(url)
+body = driver.find_element_by_css_selector('body')
+for _ in range(10):  # Adjust this range according to your needs
+    body.send_keys(Keys.PAGE_DOWN)
+    time.sleep(2)  # Wait for the page to load
 
 #request the site
 response = requests.get(url)
@@ -24,7 +35,7 @@ for row in rows:
     Name = row.find(attrs={"q:key": "SO_0"}).text
     Tier = row.find(attrs={"q:key": "3"}).text
     Lane_pos = row.find(attrs={"q:key": "kS_0"}).get('alt')
-    Lane_percent = row.find(attrs={"q:key": "kS_0"}).text
+    Lane_percent = row.find(attrs={"q:key": "SO_4"}).text
     Win = row.find(attrs={"q:key": "Ts_0"}).text
     Pick = row.find(attrs={"q:key": "6"}).text
     Ban = row.find(attrs={"q:key": "7"}).text
@@ -37,6 +48,9 @@ with open('Lolalytics_Scraped_Data.csv', 'w', newline='', encoding='utf-8') as f
     writer = csv.writer(file)
     writer.writerow(["Rank", "Name", "Tier", "Lane Position", "Lane Percentage", "Win", "Pick", "Ban", "Pbi", "Games"])
     writer.writerows(data)
+
+
+driver.quit()
 
 
 
